@@ -1,44 +1,57 @@
-const express = require('express');
-
+const express = require("express");
 const app = express();
 
-const port = 3310;
+const welcome = (req, res) => {
+  res.send("Welcome to my favourite movie list");
+};
 
-const cocktails = [
-    {
-        id : 1,
-        name : "Margarita",
-    },
-    {
-        id : 2,
-        name : "Mojito",
-    },
-    {
-        id : 3,
-        name : "Cuba Libre",
-    }
+app.get("/", welcome);
+
+const movies = [
+  {
+    id: 1,
+    title: "Citizen Kane",
+    director: "Orson Wells",
+    year: "1941",
+    color: false,
+    duration: 120,
+  },
+  {
+    id: 2,
+    title: "The Godfather",
+    director: "Francis Ford Coppola",
+    year: "1972",
+    color: true,
+    duration: 180,
+  },
+  {
+    id: 3,
+    title: "Pulp Fiction",
+    director: "Quentin Tarantino",
+    year: "1994",
+    color: true,
+    duration: 180,
+  },
 ];
 
-const getCocktails = (req, res) => {
-    res.status(200).json(cocktails);
-}
-
-app.get("/api/cocktails", getCocktails)
-;
-app.get("/", (req, res) => {
-    res.send("Welcome to Express");
-});
-
-const welcomeName = (req, res) => {
-    res.send(`Welcome ${req.params.name}`);
+const getMovies = (req, res) => {
+  res.json(movies);
 };
-app.get("/users/:name", welcomeName);
 
-app.listen(port, (err) => {
+app.get("/api/movies", getMovies);
 
-    if(err) {
-        console.error('Something bad happened');
-    } else {
-        console.log(`Server is listening on ${port}`);
-    }
-});
+const getMovieById = (req, res) => {
+  const id = parseInt(req.params.id);
+
+  const movie = movies.find((movie) => movie.id === id);
+
+  if (movie != null) {
+    res.json(movie);
+  } else {
+    res.sendStatus(404);
+  }
+};
+
+app.get("/api/movies/:id", getMovieById);
+
+module.exports = app;
